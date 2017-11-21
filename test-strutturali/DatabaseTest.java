@@ -12,13 +12,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
-import alessandromantovani.Database;
-import alessandromantovani.FileType;
-import alessandromantovani.Model;
-import alessandromantovani.NumericElement;
-import alessandromantovani.Parameter;
-import alessandromantovani.Variable;
-import util.DatabaseCreator;
+
 
 public class DatabaseTest {
 	private static Database db;
@@ -343,7 +337,7 @@ public class DatabaseTest {
 		
 		ArrayList<NumericElement> element = new ArrayList<NumericElement>();
 		element.add(new Variable("variable1", 1, 7, 1));
-		element.add(new Parameter("parameter1", 10));
+		element.add(new Param("parameter1", 10));
 		element.add(new Variable("variable2", 0, 2, 0.25f));
 		
 		/*

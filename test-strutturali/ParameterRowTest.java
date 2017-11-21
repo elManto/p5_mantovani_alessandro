@@ -5,10 +5,6 @@ import static org.junit.Assert.fail;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import alessandromantovani.Parameter;
-import alessandromantovani.ParameterRow;
-import alessandromantovani.Variable;
-
 public class ParameterRowTest {
 	private static ParameterRow parameterRow;
 	
@@ -37,17 +33,17 @@ public class ParameterRowTest {
 		 * as the value field. The operation must succeed
 		 */
 		
-		Parameter parameter = new Parameter("testParameter", 1);
-		parameterRow.setValue(parameter);
+		Param param = new Param("testParameter", 1);
+		parameterRow.setValue(param);
 		
 		/*
 		 * Retrieves the Parameter contained in the ParameterRow and checks its
 		 * equality with the retrieved Parameter
 		 */
 		
-		Parameter retrievedParameter = (Parameter) parameterRow.retrieveValue();
+		Param retrievedParameter = (Param) parameterRow.retrieveValue();
 		
-		assertTrue(retrievedParameter.toString().equals(parameter.toString()));
+		assertTrue(retrievedParameter.toString().equals(param.toString()));
 	}
 	
 	@Test

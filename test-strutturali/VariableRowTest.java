@@ -5,9 +5,6 @@ import static org.junit.Assert.fail;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import alessandromantovani.Parameter;
-import alessandromantovani.Variable;
-import alessandromantovani.VariableRow;
 
 public class VariableRowTest {
 	private static VariableRow variableRow;
@@ -25,9 +22,9 @@ public class VariableRowTest {
 		 * must throw an Exception
 		 */
 		
-		Parameter parameter = new Parameter("testParameter", 1);
+		Param param = new Param("testParameter", 1);
 		try {
-			variableRow.setValue(parameter);
+			variableRow.setValue(param);
 			fail();
 		} catch (Exception e) {
 		}

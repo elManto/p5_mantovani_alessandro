@@ -2,7 +2,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -14,11 +13,6 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import alessandromantovani.Database;
-import alessandromantovani.FileType;
-import alessandromantovani.RunManager;
-import util.DatabaseCreator;
-import util.DatabaseTestUtil;
 
 /**
  * DatabaseCreator.fillDatabase() fills the database with multiple 

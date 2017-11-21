@@ -61,7 +61,7 @@ public class ParameterRow extends Row {
 	
 	@Override
 	public Object retrieveValue() throws NumberFormatException {
-		return new Parameter(element.get(0).retrieveValue().toString(), 
+		return new Param(element.get(0).retrieveValue().toString(), 
 					Float.parseFloat(element.get(1).retrieveValue().toString()));
 	}
 
@@ -72,8 +72,8 @@ public class ParameterRow extends Row {
 	
 	@Override
 	public void setValue(Object value) throws Exception {
-		if (value instanceof Parameter) {
-			Parameter el = (Parameter) value;
+		if (value instanceof Param) {
+			Param el = (Param) value;
 			element.get(0).setValue(el.getName());
 			element.get(1).setValue(el.getValue());
 		}

@@ -12,16 +12,6 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import alessandromantovani.ConfigurationManager;
-import alessandromantovani.Database;
-import alessandromantovani.NumericElement;
-import alessandromantovani.Parameter;
-import alessandromantovani.ParameterRow;
-import alessandromantovani.Row;
-import alessandromantovani.Variable;
-import alessandromantovani.VariableRow;
-import alessandromantovani.Writer;
-import util.DatabaseCreator;
 
 
 public class ConfigurationManagerTest {
@@ -61,7 +51,7 @@ public class ConfigurationManagerTest {
 		numericElement.add(new Variable("v2", -1, 2, 0.25f));
 		
 		// insert a parameter "p1"
-		numericElement.add(new Parameter("p1", 21));
+		numericElement.add(new Param("p1", 21));
 		
 		/*
 		 * The ArrayList<NumericElement> numericElement is 
@@ -111,7 +101,7 @@ public class ConfigurationManagerTest {
 		// add a variable named "configurationVariable"
 		configurationValues.add(new Variable("configurationVariable", 2, 3, 1));
 		// add a parameter called "configurationParameter"
-		configurationValues.add(new Parameter("configurationParameter", 21));
+		configurationValues.add(new Param("configurationParameter", 21));
 		
 		/*
 		 * The just created row becomes the current configuration and 
@@ -162,7 +152,7 @@ public class ConfigurationManagerTest {
 		
 		ParameterRow parameter = new ParameterRow(0, 0);
 		// tests the setter of class ParameterRow
-		parameter.setValue(new Parameter("configurationParameter", 21));
+		parameter.setValue(new Param("configurationParameter", 21));
 		configRow.add(parameter);
 		
 		VariableRow variable = new VariableRow(0, 0);

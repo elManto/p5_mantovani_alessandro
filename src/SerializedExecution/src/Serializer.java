@@ -61,12 +61,12 @@ public class Serializer {
 		map = new HashMap<String, ArrayList<String>>();
 		
 		for (int index = 0; index < val.size(); index++) {
-			if (val.get(index) instanceof Parameter) {
+			if (val.get(index) instanceof Param) {
 				/*
 				 * For constant values (only "start" , without "step")  
 				 * you need to have "end" = "start", "step" = 0
 				 */
-				start[index] = ((Parameter) val.get(index)).getValue();
+				start[index] = ((Param) val.get(index)).getValue();
 				end[index] = start[index];
 				step[index] = 0;
 			} else {

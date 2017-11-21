@@ -4,5 +4,6 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="lib" path="/home/alemanto/eclipse-workspace/SerializedExecution/libraries/jgoodies-forms-1.8.0.jar"/>
 	<classpathentry kind="lib" path="/home/alemanto/eclipse-workspace/SerializedExecution/libraries/sqlite-jdbc-3.18.0.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/5"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

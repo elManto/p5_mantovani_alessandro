@@ -5,8 +5,6 @@ import java.sql.SQLException;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import alessandromantovani.ResultContainer;
-
 public class ResultContainerTest {
 	private static ResultContainer rc;
 

@@ -18,11 +18,7 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameter;
 import org.junit.runners.Parameterized.Parameters;
 
-import alessandromantovani.Database;
-import alessandromantovani.NumericElement;
-import alessandromantovani.Serializer;
-import alessandromantovani.Variable;
-import util.DatabaseCreator;
+
 
 @RunWith(value = Parameterized.class)
 public class SerializerTest {
@@ -107,10 +103,10 @@ public class SerializerTest {
 		numericElement = new ArrayList<NumericElement>();
 		Variable testVariable1 = new Variable("testVariable1", start1, end1, step1);
 		Variable testVariable2 = new Variable("testVariable2", start2, end2, step2);
-		alessandromantovani.Parameter testParameter1 = 
-				new alessandromantovani.Parameter("testParameter1", 5);
-		alessandromantovani.Parameter testParameter2 = 
-				new alessandromantovani.Parameter("testParameter2", 8);
+		Param testParameter1 = 
+				new Param("testParameter1", 5);
+		Param testParameter2 = 
+				new Param("testParameter2", 8);
 		
 		/*
 		 * Computes the possible values of the two 

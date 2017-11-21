@@ -380,7 +380,7 @@ public class Database {
 			 */
 			NumericElement el;
 			if (step <= 0)
-				el = new Parameter(name, start);
+				el = new Param(name, start);
 			else
 				el = new Variable(name, start, end, step);
 

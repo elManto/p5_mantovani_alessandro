@@ -18,10 +18,10 @@
  * the name and the value of a numeric constant.
  */
 
-public class Parameter extends NumericElement {
+public class Param extends NumericElement {
 	private float value;
 	
-	public Parameter(String name, float value) {
+	public Param(String name, float value) {
 		super(name);
 		this.value = value;
 	}

@@ -8,8 +8,6 @@ import java.io.IOException;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import alessandromantovani.FileType;
-import alessandromantovani.Model;
 
 public class ModelTest {
 

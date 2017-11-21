@@ -8,11 +8,6 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import alessandromantovani.Database;
-import alessandromantovani.FileManager;
-import alessandromantovani.FileType;
-import alessandromantovani.Model;
-import util.DatabaseCreator;
 
 public class FileManagerTest {
 	private static FileManager fm;
