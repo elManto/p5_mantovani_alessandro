@@ -1,5 +1,3 @@
-package alessandromantovanitest_funzionali;
-
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;

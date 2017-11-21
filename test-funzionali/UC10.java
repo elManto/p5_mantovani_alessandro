@@ -1,5 +1,3 @@
-	package alessandromantovanitest_funzionali;
-
 import static org.junit.Assert.*;
 
 import java.util.ArrayList;

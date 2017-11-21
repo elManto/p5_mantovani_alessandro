@@ -1,5 +1,3 @@
-package alessandromantovanitest_strutturali;
-
 import static org.junit.Assert.assertNull;
 
 import java.sql.SQLException;
