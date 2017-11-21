@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import util.DatabaseCreator;
 import javax.swing.JTextField;
 
 public class UC12 {

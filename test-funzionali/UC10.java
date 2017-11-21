@@ -6,11 +6,6 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import alessandromantovani.FileType;
-import alessandromantovani.Model;
-import util.DatabaseCreator;
-import alessandromantovanitest_funzionali.MainLauncher;
-
 public class UC10 {
 
 	private static DatabaseCreator testDB;

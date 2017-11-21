@@ -6,8 +6,6 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import alessandromantovani.FileType;
-import util.DatabaseCreator;
 
 public class UC16 {
 

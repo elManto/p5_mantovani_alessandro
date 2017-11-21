@@ -4,10 +4,7 @@ import java.util.ArrayList;
 
 import javax.swing.JFrame;
 
-import alessandromantovani.FileType;
-import alessandromantovani.Main;
-import alessandromantovani.Model;
-import alessandromantovani.NumericElement;
+
 
 public class MainLauncher extends Thread {
 
@@ -23,7 +20,7 @@ public class MainLauncher extends Thread {
 	}
 	
 	public ArrayList<Model> getClicked(FileType fileType) throws InterruptedException{
-		//System.out.println("Calling Main.getClicked() from MainLauncher()");
+		
 		return Main.getClicked(fileType);
 	}
 	
