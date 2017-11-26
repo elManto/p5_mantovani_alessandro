@@ -1,5 +1,5 @@
 /*
- * Author: Roberto Ronco
+ * Author: Roberto Ronco, Alessandro Mantovani
  * 
  * Date: 20/06/2017 
  * 

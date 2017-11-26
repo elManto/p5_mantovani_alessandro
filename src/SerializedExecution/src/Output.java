@@ -50,6 +50,7 @@ public class Output {
 		this.outputFileFolder = outputFileFolder;
 	}
 
+	
 	/**
 	 * This method manages the process of writing results of the serialised
 	 * execution of an EC into a structured document located at path
@@ -59,7 +60,6 @@ public class Output {
 	 * @param sortedEntries
 	 * @throws IOException 
 	 */
-	
 	
 	public void writeToFile() throws IOException{
 		File f = new File(outputFileFolder + File.separator + "output.txt");

@@ -4,7 +4,6 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Iterator;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -15,9 +14,10 @@ import org.junit.rules.ExpectedException;
 
 
 public class DatabaseTest {
+	private static final FileType fileType = FileType.CONFIGURATION;
+
 	private static Database db;
 	private static DatabaseCreator dbCreator;
-	private static final FileType fileType = FileType.CONFIGURATION;
 	
 	@Rule
     public ExpectedException thrown = ExpectedException.none();
@@ -25,13 +25,11 @@ public class DatabaseTest {
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
 		String dbName = "DatabaseTest.sqlite";
-	
 		dbCreator = new DatabaseCreator(dbName);
 		dbCreator.create();
 		dbCreator.fillDatabase();
 		
-		String dbPath = "jdbc:sqlite:db" + File.separator + dbName;
-		db = new Database(dbPath);
+		db = new Database("jdbc:sqlite:db" + File.separator + dbName);
 	}
 
 	@AfterClass
@@ -39,334 +37,364 @@ public class DatabaseTest {
 		db.closeConnection();
 		dbCreator.delete();
 	}
+
+	@Test
+	public final void testInsertRemoveRetrieveTable() throws Exception {
+		
+		/*
+		 * The current models are retrieved from the database
+		 */
+		ArrayList<Model> model = db.retrieveFromTable(fileType);
+		
+		/*
+		 * Now, we insert a new model into the appropriate database
+		 * table
+		 */
+		
+		String configName = "correctTestConfigName";
+		db.insertIntoTable(configName, "", fileType);
+		
+		/*
+		 * We perform another extraction of the current models from 
+		 * the database. The ArrayList which is returned will contain 
+		 * the new model, as verified later
+		 */
+		
+		ArrayList<Model> newRetrievedModel = db.retrieveFromTable(fileType);
+		
+		/*
+		 * Consequence of these passages is that the models number
+		 * (i.e. the size of ArrayList<> named "newRetrievedModel")
+		 * has increased by one after insertion
+		 */
+		
+		int expectedModelNumber = model.size() + 1;
+		int realModelNumber = newRetrievedModel.size();
+		assertEquals(realModelNumber, expectedModelNumber);
+		
+		/*
+		 * Here, a comparison between all the models before the insertion
+		 * and after the insertion is performed. The last one is not considered
+		 * because it has been inserted in the last insertion
+		 */
+		
+		int i = 0;
+		while (i < model.size()) {
+			
+			assertEquals(newRetrievedModel.get(i).getId(), model.get(i).getId());
+			i++;
+		}
+		
+		/*
+		 * Test that the last inserted element has name equal
+		 * to the choosen name stored in "configName"
+		 */
+		
+		Model lastInsertedModel = newRetrievedModel.get(newRetrievedModel.size() - 1);
+		assertTrue(lastInsertedModel.getPath().equals(""));	
+		assertTrue(lastInsertedModel.getName().equals(configName));
+		
+		
+		/*
+		 * Deletes the just inserted model from the table
+		 * of the configurations
+		 */
+		
+		assertTrue(db.removeFromTable(configName, fileType));
+		
+		/*
+		 * After that, the models' array must be 
+		 * decreased by one and totally equal to the 
+		 * first array of model.
+		 */
+		
+		newRetrievedModel = db.retrieveFromTable(fileType);
+		assertEquals(model.size(), newRetrievedModel.size());
+		
+		i = 0;
+		while (i < model.size()) {
+			assertEquals(newRetrievedModel.get(i).getId(), model.get(i).getId());
+			i++;
+		}
+		
+		/*
+		 * Now we check that all the associated configuration 
+		 * values (i.e. parameters or variables) have been deleted
+		 * as the configuration is not more available. 
+		 * To implement this check we need the id of the deleted
+		 * model.
+		 */
+		
+		int modelId = lastInsertedModel.getId(); 
+
+		
+		assertEquals(db.retrieveConfigurationValues(String.valueOf(modelId)).size(), 0);
+		
+		/*
+		 * Attempts to delete a not existing configuration
+		 */
+		
+		assertFalse(db.removeFromTable("ThisConfigDoesntExist", fileType));
+		
+		/*
+		 * Deselects every external classifier (EC); finally checks
+		 * that no configuration can be inserted or retrieved. This
+		 * is due to the fact that EC and Configurations are bound.
+		 */
+		
+		ArrayList<Model> ec = 
+				db.retrieveFromTable(FileType.EC);
+		assertTrue(ec.size() > 0);
+		
+		db.updateClicked("*", 0, FileType.EC);
+		
+		db.insertIntoTable("testConfig", "", fileType);
+		assertEquals(db.retrieveFromTable(fileType).size(), 0);
+			
+		db.updateClicked(ec.get(0).getName(), 1, FileType.EC);
+		
+	}
 	
 	@Test
 	public final void testGetTableName() throws Exception {
 		String[] table = new String[]{"EC_TABLE", "TEST_SET_TABLE", 
 				"TRAIN_SET_TABLE", "CONFIGURATION_TABLE"};
 		
-		int numberOfTables = table.length;
-		for (int i = 0; i < numberOfTables; i++)
-			assertEquals(Database.getTableName(FileType.values()[i]), table[i]);
+		/*
+		 * Simply we check the correctness of the method for each available
+		 * FileType by comparing the expected table name (contained in array
+		 * "table") and the returned table name
+		 */
+		
+		int i = 0;
+		
+		while (i < FileType.values().length) {
+			assertEquals(Database.getTableName(
+									FileType.values()[i]), 
+									table[i]);
+			
+			i++;
+		}
+		
 	}
-	
+
 	@Test
 	public final void testUpdateClicked() throws Exception {
 		/*
-		 * Tests whether updating the clicked state of 
-		 * a non existing configuration has a perceivable,
-		 * disruptive effect on the execution or not
+		 * Checks if updating the attribute "clicked" of 
+		 * a not existing configuration has an observable,
+		 * (eventually negative) result on the flow of the
+		 * software. 
 		 */
 		
 		ArrayList<Model> retrievedModel = db.retrieveFromTable(fileType);
 		
-		db.updateClicked("inexistentConfiguration", 1, fileType);
+		db.updateClicked("nonExistingConfiguration", 1, fileType);
 		
-		ArrayList<Model> newRetrievedModel = db.retrieveFromTable(fileType);
+		ArrayList<Model> newRetrievedModelPostUpdate = db.retrieveFromTable(fileType);
 		
-		int retrievedModelSize = retrievedModel.size();
-		int newRetrievedModelSize = newRetrievedModel.size();
-		assertEquals(retrievedModelSize, newRetrievedModelSize);
+		/*
+		 * We expect that no difference is detected 
+		 */
 		
-		for (int i = 0; i < retrievedModelSize; i++) {
-			assertTrue(newRetrievedModel.get(i).getName() 
-					== retrievedModel.get(i).getName());
-			assertTrue(newRetrievedModel.get(i).getClicked() 
-					== retrievedModel.get(i).getClicked());
+		int expectedSize = retrievedModel.size();
+		int effectiveSize = newRetrievedModelPostUpdate.size(); 
+		assertEquals(effectiveSize, expectedSize);
+		
+		int i = 0;
+		while (i < retrievedModel.size()) {
+			assertEquals(
+					newRetrievedModelPostUpdate.get(i).getName(), 
+					retrievedModel.get(i).getName()
+					);
+			
+			assertEquals(
+					newRetrievedModelPostUpdate.get(i).getClicked(), 
+					retrievedModel.get(i).getClicked()
+					);
+			
+			i++;
 		}
 		
 		/*
-		 * Inserts a new configuration, clicks and unclicks 
-		 * and checks the consistency of the operations
+		 * Firstly, we insert a new configuration. 
+		 * 
+		 * Secondly, click and unclick are performed
+		 *  
+		 * Finally we check the consistency of the operations.
 		 */
 		
-		String configName = "UpdateClickedConfigTest";
+		String configName = "testAnotherConfiguration";
 		db.insertIntoTable(configName, "", fileType);
 		
 		db.updateClicked(configName, 1, fileType);
 		
-		ArrayList<Model> checkedModel = db.getClickedModels(fileType);
-		Iterator<Model> checkedModelIterator = checkedModel.iterator();
+		ArrayList<Model> models = db.getClickedModels(fileType);
 		
-		while(checkedModelIterator.hasNext()) {
-			Model mod = checkedModelIterator.next();
+		for (Model mod : models)
 			if (mod.getName().equals(configName))
-				assertTrue(mod.getClicked());
-		}
+				assertEquals(mod.getClicked(), true);
 		
 		db.updateClicked(configName, 0, fileType);
-		checkedModel = db.getClickedModels(fileType);
-		
-		for (int i = 0; i < checkedModel.size(); i++)
-			assertFalse(checkedModel.get(i).getName().equals(configName));
-		
+		models = db.getClickedModels(fileType);
+		for (Model m : models)
+			assertTrue(!m.getName().equals(configName));
 		
 		/*
-		 * Unclicks all the configurations and verifies the
-		 * consistency of the operation
+		 * Unclicks every available configuration and checks the
+		 * coherency and the consistency of the executed operation
 		 */
 		
-		String secondConfigName = "UpdateClickedConfig2test";
+		String secondConfigName = "testUpdateClickedConfiguration2";
 		db.insertIntoTable(secondConfigName, "", fileType);
 		
 		db.updateClicked("*", 0, fileType);
-		checkedModel = db.getClickedModels(fileType);
-		assertEquals(checkedModel.size(), 0);
+		models = db.getClickedModels(fileType);
+		assertTrue(models.size() == 0);
 		
-		db.removeFromTable(secondConfigName, fileType);
 		db.removeFromTable(configName, fileType);
-		
+		db.removeFromTable(secondConfigName, fileType);
 	}
-
-	@Test
-	public final void testInsertRemoveRetrieveTable() throws Exception {
-		/*
-		 * Retrieves the current models from the database
-		 */
-		
-		ArrayList<Model> retrievedModel = db.retrieveFromTable(fileType);
-		
-		/*
-		 * Inserts a new model into the database
-		 */
-		
-		String s = "testRetrieveInsert";
-		
-		db.insertIntoTable(s, "", fileType);
-		
-		/*
-		 * Retrieves the current models from the database, again.
-		 * Now the returned ArrayList will contain the new model,
-		 * as verified later
-		 */
-		
-		ArrayList<Model> newRetrievedModel = db.retrieveFromTable(fileType);
-		
-		/*
-		 * Asserts that the models number has increased
-		 * by one after insertion
-		 */
-		
-		int expextedModelNumber = retrievedModel.size() + 1;
-		int realModelNumber = newRetrievedModel.size();
-		assertTrue(realModelNumber == expextedModelNumber);
-		
-		/*
-		 * Compares all the models before the insertion with
-		 * the new models, except for the last one, which must
-		 * be the result of the last insertion
-		 */
-		
-		Iterator<Model> retrievedModelIt = retrievedModel.iterator();
-		Iterator<Model> newRetrievedModelIt = newRetrievedModel.iterator();
-		
-		while(retrievedModelIt.hasNext() && newRetrievedModelIt.hasNext())
-			assertEquals(retrievedModelIt.next().getId(),
-					newRetrievedModelIt.next().getId());
-		
-		/*
-		 * Checks the equality of the last element 
-		 * of newModel -supposedly the last model 
-		 * inserted - with the expected name
-		 */
-		
-		Model model = newRetrievedModel.get(newRetrievedModel.size() - 1);
-		int modelId = model.getId(); // saves the id for further computation
-		
-		assertEquals(model.getName(), s);
-		assertEquals(model.getPath(), "");	
-		
-		/*
-		 * Removes the inserted model from the table
-		 */
-		
-		assertTrue(db.removeFromTable(s, fileType));
-		
-		/*
-		 * After the removal, the models' array must be reset,
-		 * i.e. decreased by one and totally equal to the 
-		 * first array of model, "model"
-		 */
-		
-		newRetrievedModel = db.retrieveFromTable(fileType);
-		assertEquals(retrievedModel.size(), newRetrievedModel.size());
-		
-		Iterator<Model> retrievedModelIter = retrievedModel.iterator();
-		Iterator<Model> newRetrievedModelIter = newRetrievedModel.iterator();
-		
-		while(retrievedModelIter.hasNext() && newRetrievedModelIter.hasNext())
-			assertEquals(retrievedModelIter.next().getId(),
-					newRetrievedModelIter.next().getId());
-	
-		
-		/*
-		 * Tries to remove a non existing configuration
-		 */
-		
-		assertFalse(db.removeFromTable("nonExistingConfig", fileType));
-		
-		/*
-		 * Checks that all the associated configuration 
-		 * values (if any) have been deleted, too
-		 */
-		
-		assertTrue(db.retrieveConfigurationValues(String.valueOf(modelId)).size() == 0);
-		
-		/*
-		 * Unclicks all the external classifiers, and then checks
-		 * that no configuration can be inserted or retrieved
-		 */
-		
-		ArrayList<Model> retrievedExternalClassifier = db
-				.retrieveFromTable(FileType.EC);
-		
-		assertTrue(retrievedExternalClassifier.size() > 0);
-		
-		db.updateClicked("*", 0, FileType.EC);
-		
-		db.insertIntoTable("aTestConfiguration", "", fileType);
-		
-		assertEquals(db.retrieveFromTable(fileType).size(), 0);
-			
-		db.updateClicked(retrievedExternalClassifier.get(0).getName(), 1, FileType.EC);
-		
-	}
-	
-	
-	@Test
-	public final void testConnection() throws Exception {
-		/*
-		 * Closes the current connection
-		 */
-		
-		db.closeConnection();
-		
-		/*
-		 * If invalid, restores a proper connection to the database
-		 */
-		
-		db.connectionValidator();
-		
-		/*
-		 * If the following statement fails, the 
-		 * connection has not been properly reset
-		 */
-		
-		db.retrieveFromTable(fileType);
-	}
-
-	
 	
 	@Test
 	public final void testGetClickedModels() throws Exception {
 		
-		String configName = "GetClickedModelsConfigtest";
+		String configName = "testGetClickedModelsConfiguration";
 		
 		/*
-		 * Retrieves the current array of models
+		 * Gets the current array of models
 		 */
 		
-		ArrayList<Model> checkedModel = db.getClickedModels(fileType);
+		ArrayList<Model> extracted = db.getClickedModels(fileType);
 		
 		/*
-		 * Inserts a new model into the database and clicks it
+		 * Inserts a new configuration into the appropriate 
+		 * table database and clicks it
 		 */
 		
 		db.insertIntoTable(configName, "", fileType);
 		db.updateClicked(configName, 1, fileType);
 		
 		/*
-		 * Retrieves the new array of models, which 
-		 * must contain the newly inserted element,
-		 * which must be characterized by a consistent
-		 * clicked state
+		 * Gets the new array of models. If everything is 
+		 * ok, it must contain the just inserted configuration,
+		 * which should have consistent clicked state
 		 */
 		
-		ArrayList<Model> newCheckedModel = db.getClickedModels(fileType);
+		ArrayList<Model> newModel = db.getClickedModels(fileType);
 		
 		/*
 		 * Checks that the size of the fileType array 
 		 * of models has been increased by one
 		 */
 		
-		int expectedNumberOfModel = checkedModel.size() + 1;
-		int effectiveNumberOfModel = newCheckedModel.size();
-		assertEquals(effectiveNumberOfModel, expectedNumberOfModel);
+		int effective = newModel.size();
+		int expected = extracted.size() + 1;
+		assertEquals(effective, expected);
 		
 		/*
 		 * Checks the consistency of the clicked state 
 		 * of the current models with the old ones
 		 */
 		
-		for (int i = 0; i < effectiveNumberOfModel; i++) {
-			assertEquals(newCheckedModel.get(i).getName(), checkedModel.get(i).getName());
-			assertEquals(newCheckedModel.get(i).getClicked(), checkedModel.get(i).getClicked());
+		int i = 0;
+		while (i < extracted.size()) {
+			assertEquals(
+					newModel.get(i).getName(),
+					extracted.get(i).getName());
+			
+			assertEquals(
+					newModel.get(i).getClicked(), 
+					extracted.get(i).getClicked());
+			i++;
 		}
 		
-		assertTrue(newCheckedModel.get(newCheckedModel.size() - 1).getClicked());	
+		assertEquals(newModel.get(newModel.size() - 1).getClicked(), true);	
 	}
 	
 	@Test
 	public final void testInsertRetrieveConfigurationValues() throws Exception {
 		/*
-		 * Creates a new configuration and inserts it into the database
+		 * Firstly we create a new configuration named as follows:
 		 */
 		
-		String configName = "InsertRetrieveConfigtest";
-		db.insertIntoTable(configName, "", fileType);
+		String name = "testInsertRetrieveConfiguration";
+		
+		//...and inserts it into the database
+		db.insertIntoTable(name, "", fileType);
 		
 		/*
-		 * Retrieves the id of the configuration
+		 * Gets the identifier of the configuration
 		 */
 		
-		String idConfig = "";
-		ArrayList<Model> retrievedModel = db.retrieveFromTable(fileType);
-		Iterator<Model> modelIterator = retrievedModel.iterator();
-		while(modelIterator.hasNext()) {
-			Model mod = modelIterator.next();
-			if (mod.getName().equals(configName))
-				idConfig = String.valueOf(mod.getId());
-		}
-		
-		assertTrue(!idConfig.equals(""));
+		String configurationId = "";
+		ArrayList<Model> model = db.retrieveFromTable(fileType);
+		for (Model m : model)
+			if (m.getName().equals(name))
+				configurationId = String.valueOf(m.getId());
+		assertFalse(configurationId.equals(""));
 		
 		/*
 		 * Creates and fill a new ArrayList<NumericElement>
 		 * with some Variables and Parameters
 		 */
 		
-		ArrayList<NumericElement> element = new ArrayList<NumericElement>();
-		element.add(new Variable("variable1", 1, 7, 1));
-		element.add(new Param("parameter1", 10));
-		element.add(new Variable("variable2", 0, 2, 0.25f));
+		ArrayList<NumericElement> numericElement = new ArrayList<NumericElement>();
+		numericElement.add(new Variable("var1", 1, 11, 2));
+		numericElement.add(new Variable("var1", 3, 4, 0.5f));
+		numericElement.add(new Param("par1", 21));
 		
 		/*
 		 * Inserts the values of the configuration
 		 * into the database
 		 */
 		
-		db.insertConfigurationValues(String.valueOf(idConfig), 
-				element);
+		db.insertConfigurationValues(String.valueOf(configurationId), 
+				numericElement);
 		
 		/*
 		 * Retrieves the configuration values inserted
 		 */
 		
-		ArrayList<NumericElement> retrievedElement =
-				db.retrieveConfigurationValues(idConfig);
+		ArrayList<NumericElement> retrievedNumericElement =
+				db.retrieveConfigurationValues(configurationId);
 		
 		/*
 		 * Checks the consistency of the inserted numeric element
 		 * with the retrieved ones
 		 */
-		int elementSize = element.size();
-		int retrievedElementSize = retrievedElement.size();
-		assertEquals(elementSize, retrievedElementSize);
-		for (int i = 0; i < element.size(); i++) 
-			assertTrue(element.get(i).toString()
-					.equals(retrievedElement.get(i).toString()));		
+		
+		assertEquals(numericElement.size(), retrievedNumericElement.size());
+		
+		int i = 0;
+		while (i < numericElement.size()) {
+			assertTrue(numericElement.get(i).toString()
+					.equals(retrievedNumericElement.get(i).toString()));
+			i++;
+		}
+					
 	}
 	
 	
-	
+	@Test
+	public final void testConnection() throws Exception {
+		/*
+		 * Ends the current connection
+		 */
+		
+		db.closeConnection();
+		
+		/*
+		 * If it is invalid, it restores a valid connection to db
+		 */
+		
+		db.connectionValidator();
+		
+		/*
+		 * If the retrieval fails, the 
+		 * connection has not been properly reset
+		 */
+		
+		db.retrieveFromTable(fileType);
+	}
 }

@@ -1,10 +1,21 @@
-package util;
+/*
+ * Author: Dario Capozzi, Alessandro Mantovani, Roberto Ronco, Giulio Tavella
+ * 
+ * Date: 20/06/2017 
+ * 
+ * The aim of the project is the optimization of an automatic classifier. In 
+ * particular, the software will execute the classifier selected by the user 
+ * with different combinations of input parameters. The result is a file
+ * containing all the outputs for each execution that can be used by the 
+ * analyst to choose the best input configuration.
+ * 
+ */
 
 import java.util.ArrayList;
 
-import robertoronco.Database;
-import robertoronco.FileType;
-import robertoronco.Model;
+/**
+ * The class DatabaseTestUtil was created for debugging purpose.
+ */
 
 public class DatabaseTestUtil {
 	public static void printDatabaseData(Database database) throws Exception {
