@@ -39,120 +39,25 @@ public class DatabaseTest {
 	}
 
 	@Test
-	public final void testInsertRemoveRetrieveTable() throws Exception {
-		
+	public final void testConnection() throws Exception {
 		/*
-		 * The current models are retrieved from the database
-		 */
-		ArrayList<Model> model = db.retrieveFromTable(fileType);
-		
-		/*
-		 * Now, we insert a new model into the appropriate database
-		 * table
+		 * Ends the current connection
 		 */
 		
-		String configName = "correctTestConfigName";
-		db.insertIntoTable(configName, "", fileType);
+		db.closeConnection();
 		
 		/*
-		 * We perform another extraction of the current models from 
-		 * the database. The ArrayList which is returned will contain 
-		 * the new model, as verified later
+		 * If it is invalid, it restores a valid connection to db
 		 */
 		
-		ArrayList<Model> newRetrievedModel = db.retrieveFromTable(fileType);
+		db.connectionValidator();
 		
 		/*
-		 * Consequence of these passages is that the models number
-		 * (i.e. the size of ArrayList<> named "newRetrievedModel")
-		 * has increased by one after insertion
+		 * If the retrieval fails, the 
+		 * connection has not been properly reset
 		 */
 		
-		int expectedModelNumber = model.size() + 1;
-		int realModelNumber = newRetrievedModel.size();
-		assertEquals(realModelNumber, expectedModelNumber);
-		
-		/*
-		 * Here, a comparison between all the models before the insertion
-		 * and after the insertion is performed. The last one is not considered
-		 * because it has been inserted in the last insertion
-		 */
-		
-		int i = 0;
-		while (i < model.size()) {
-			
-			assertEquals(newRetrievedModel.get(i).getId(), model.get(i).getId());
-			i++;
-		}
-		
-		/*
-		 * Test that the last inserted element has name equal
-		 * to the choosen name stored in "configName"
-		 */
-		
-		Model lastInsertedModel = newRetrievedModel.get(newRetrievedModel.size() - 1);
-		assertTrue(lastInsertedModel.getPath().equals(""));	
-		assertTrue(lastInsertedModel.getName().equals(configName));
-		
-		
-		/*
-		 * Deletes the just inserted model from the table
-		 * of the configurations
-		 */
-		
-		assertTrue(db.removeFromTable(configName, fileType));
-		
-		/*
-		 * After that, the models' array must be 
-		 * decreased by one and totally equal to the 
-		 * first array of model.
-		 */
-		
-		newRetrievedModel = db.retrieveFromTable(fileType);
-		assertEquals(model.size(), newRetrievedModel.size());
-		
-		i = 0;
-		while (i < model.size()) {
-			assertEquals(newRetrievedModel.get(i).getId(), model.get(i).getId());
-			i++;
-		}
-		
-		/*
-		 * Now we check that all the associated configuration 
-		 * values (i.e. parameters or variables) have been deleted
-		 * as the configuration is not more available. 
-		 * To implement this check we need the id of the deleted
-		 * model.
-		 */
-		
-		int modelId = lastInsertedModel.getId(); 
-
-		
-		assertEquals(db.retrieveConfigurationValues(String.valueOf(modelId)).size(), 0);
-		
-		/*
-		 * Attempts to delete a not existing configuration
-		 */
-		
-		assertFalse(db.removeFromTable("ThisConfigDoesntExist", fileType));
-		
-		/*
-		 * Deselects every external classifier (EC); finally checks
-		 * that no configuration can be inserted or retrieved. This
-		 * is due to the fact that EC and Configurations are bound.
-		 */
-		
-		ArrayList<Model> ec = 
-				db.retrieveFromTable(FileType.EC);
-		assertTrue(ec.size() > 0);
-		
-		db.updateClicked("*", 0, FileType.EC);
-		
-		db.insertIntoTable("testConfig", "", fileType);
-		assertEquals(db.retrieveFromTable(fileType).size(), 0);
-			
-		db.updateClicked(ec.get(0).getName(), 1, FileType.EC);
-		
+		db.retrieveFromTable(fileType);
 	}
 	
 	@Test
@@ -312,6 +217,125 @@ public class DatabaseTest {
 		assertEquals(newModel.get(newModel.size() - 1).getClicked(), true);	
 	}
 	
+	
+	@Test
+	public final void testInsertRemoveRetrieveTable() throws Exception {
+		
+		/*
+		 * The current models are retrieved from the database
+		 */
+		ArrayList<Model> model = db.retrieveFromTable(fileType);
+		
+		/*
+		 * Now, we insert a new model into the appropriate database
+		 * table
+		 */
+		
+		String configName = "correctTestConfigName";
+		db.insertIntoTable(configName, "", fileType);
+		
+		/*
+		 * We perform another extraction of the current models from 
+		 * the database. The ArrayList which is returned will contain 
+		 * the new model, as verified later
+		 */
+		
+		ArrayList<Model> newRetrievedModel = db.retrieveFromTable(fileType);
+		
+		/*
+		 * Consequence of these passages is that the models number
+		 * (i.e. the size of ArrayList<> named "newRetrievedModel")
+		 * has increased by one after insertion
+		 */
+		
+		int expectedModelNumber = model.size() + 1;
+		int realModelNumber = newRetrievedModel.size();
+		assertEquals(realModelNumber, expectedModelNumber);
+		
+		/*
+		 * Here, a comparison between all the models before the insertion
+		 * and after the insertion is performed. The last one is not considered
+		 * because it has been inserted in the last insertion
+		 */
+		
+		int i = 0;
+		while (i < model.size()) {
+			
+			assertEquals(newRetrievedModel.get(i).getId(), model.get(i).getId());
+			i++;
+		}
+		
+		/*
+		 * Test that the last inserted element has name equal
+		 * to the choosen name stored in "configName"
+		 */
+		
+		Model lastInsertedModel = newRetrievedModel.get(newRetrievedModel.size() - 1);
+		assertTrue(lastInsertedModel.getPath().equals(""));	
+		assertTrue(lastInsertedModel.getName().equals(configName));
+		
+		
+		/*
+		 * Deletes the just inserted model from the table
+		 * of the configurations
+		 */
+		
+		assertTrue(db.removeFromTable(configName, fileType));
+		
+		/*
+		 * After that, the models' array must be 
+		 * decreased by one and totally equal to the 
+		 * first array of model.
+		 */
+		
+		newRetrievedModel = db.retrieveFromTable(fileType);
+		assertEquals(model.size(), newRetrievedModel.size());
+		
+		i = 0;
+		while (i < model.size()) {
+			assertEquals(newRetrievedModel.get(i).getId(), model.get(i).getId());
+			i++;
+		}
+		
+		/*
+		 * Now we check that all the associated configuration 
+		 * values (i.e. parameters or variables) have been deleted
+		 * as the configuration is not more available. 
+		 * To implement this check we need the id of the deleted
+		 * model.
+		 */
+		
+		int modelId = lastInsertedModel.getId(); 
+
+		
+		assertEquals(db.retrieveConfigurationValues(String.valueOf(modelId)).size(), 0);
+		
+		/*
+		 * Attempts to delete a not existing configuration
+		 */
+		
+		assertFalse(db.removeFromTable("ThisConfigDoesntExist", fileType));
+		
+		/*
+		 * Deselects every external classifier (EC); finally checks
+		 * that no configuration can be inserted or retrieved. This
+		 * is due to the fact that EC and Configurations are bound.
+		 */
+		
+		ArrayList<Model> ec = 
+				db.retrieveFromTable(FileType.EC);
+		assertTrue(ec.size() > 0);
+		
+		db.updateClicked("*", 0, FileType.EC);
+		
+		db.insertIntoTable("testConfig", "", fileType);
+		assertEquals(db.retrieveFromTable(fileType).size(), 0);
+			
+		db.updateClicked(ec.get(0).getName(), 1, FileType.EC);
+		
+	}
+	
+	
 	@Test
 	public final void testInsertRetrieveConfigurationValues() throws Exception {
 		/*
@@ -373,28 +397,5 @@ public class DatabaseTest {
 			i++;
 		}
 					
-	}
-	
-	
-	@Test
-	public final void testConnection() throws Exception {
-		/*
-		 * Ends the current connection
-		 */
-		
-		db.closeConnection();
-		
-		/*
-		 * If it is invalid, it restores a valid connection to db
-		 */
-		
-		db.connectionValidator();
-		
-		/*
-		 * If the retrieval fails, the 
-		 * connection has not been properly reset
-		 */
-		
-		db.retrieveFromTable(fileType);
 	}
 }
