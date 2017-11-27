@@ -273,8 +273,10 @@ public class RunManager implements Runnable {
 	}
 	
 	public void closeParent() {
-		if (parent != null)
+		if (parent != null) 
 			parent.dispatchEvent(new WindowEvent(parent, WindowEvent.WINDOW_CLOSING));
+
+		
 	}
 }
 

@@ -340,19 +340,37 @@ public class Window {
 	
 	public void testClickedConfiguration() throws InterruptedException{
 		FileType fileType = FileType.CONFIGURATION;
-		ArrayList<Model> EC = fileManager.getClicked(fileType);
-		if(!EC.isEmpty()){
+		/*
+		 * Extracts all the clicked configurations
+		 */
+		ArrayList<Model> config = fileManager.getClicked(fileType);
+		if(!config.isEmpty()){
 			int clickedIndex = -1;
+			/*
+			 * Iterates over the jTable containing the configurations. 
+			 * Provided that only one configurations can be clicked, 
+			 * when it is found the loop is interrupted and the index is 
+			 * saved in "clickedIndex"
+			 */
 			for(int i = 0; i < jTable[fileType.ordinal()].getRowCount(); i++){
 				if((boolean) defaultTableModel[fileType.ordinal()].getValueAt(i, 0)){
 					clickedIndex = i;
 					break;
 				}
 			}
+			
+			/*
+			 * Here we check if "clickedIndex" is the last index in
+			 * the table. If so, we check the index 0, differently 
+			 * we check the following index (i.e. "clickedIndex+1")
+			 */
 			int toBeClicked = ((clickedIndex + 1) > 
 					defaultTableModel[fileType.ordinal()].getRowCount() - 1) ? 
 							0 : (clickedIndex + 1);
 			
+			/*
+			 * Changes the table and fires the event
+			 */
 			defaultTableModel[fileType.ordinal()].setValueAt(true, toBeClicked, 0);
 			defaultTableModel[fileType.ordinal()].fireTableChanged(
 					new TableModelEvent(defaultTableModel[fileType.ordinal()],toBeClicked,toBeClicked,0));
@@ -362,12 +380,23 @@ public class Window {
 	public void testConfigurationValueDelete() throws Exception{
 		jTable[FileType.CONFIGURATION.ordinal()].setRowSelectionInterval(0, 0);
 		Thread.sleep(3000);
+		/*
+		 * Clicks on the button to generate the frame that handles
+		 * the configurations (configurationBuilder)
+		 */
 		inputConfigurationChange.doClick();
 		Thread.sleep(3000);
-		ArrayList<StandardElement> element =  configurationBuilder.getRow().get(0).getElement();
+		ArrayList<StandardElement> element =  configurationBuilder.getRow()
+														.get(0).getElement();
+		/*
+		 * Retrieves the deletion button and clicks it
+		 */
 		StandardButton sb = (StandardButton) element.get(element.size() - 1);
 		sb.getButton().doClick();
 		Thread.sleep(3000);
+		/*
+		 * Confirm the deletion
+		 */
 		configurationBuilder.getConfirmButton().doClick();
 	}
 	
@@ -448,10 +477,10 @@ public class Window {
 	}
 	
 	private void scheduleAutoAnswerJOptionPane(int answer,int timeToWait){
+		System.out.println("INSIDE SCHEDULEAUTOANSWERJOPTIONPANE");
 		TimerTask timerTask = new TimerTask() {
 	        @Override
 	        public void run() {
-	        	//System.out.println("Going to fire scheduleAutoAnswerJOptionPane with " + answer);
 	        	java.awt.Window[] windows = java.awt.Window.getWindows();
 	            for (java.awt.Window window : windows) {
 	                if (window instanceof JDialog) {
@@ -485,6 +514,10 @@ public class Window {
 		Thread.sleep(3000);
 		jTable[FileType.CONFIGURATION.ordinal()].setRowSelectionInterval(0, 0);
 		Thread.sleep(3000);
+		/*
+		 * Generation of the event "click on the button".
+		 * After clicking, configurationBuilder is istantiated
+		 */
 		inputConfigurationChange.doClick();
 		while(configurationBuilder == null){
 			Thread.sleep(1000);
