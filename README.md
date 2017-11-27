@@ -1,8 +1,12 @@
-# Ottimizzazione Classificatori Automatici
+#Ottimizzazione Classificatori Automatici
 
 # Implementation
 
-Dopo aver eseguito la clonazione dell repository (git clone), per effettuare l'importazione del progetto in Eclipse è sufficiente:
+Dopo aver eseguito la clonazione della repository con il comando:
+
+	<pre><code>git clone https://github.com/elManto/p5_mantovani_alessandro.git</code></pre>
+
+Per effettuare l'importazione del progetto in Eclipse è sufficiente:
 1. File
 2. Import
 3. Existing Projects Into Workspace
