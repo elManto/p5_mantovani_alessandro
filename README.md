@@ -4,7 +4,7 @@
 
 Dopo aver eseguito la clonazione della repository con il comando:
 
-	<pre><code>git clone https://github.com/elManto/p5_mantovani_alessandro.git</code></pre>
+	git clone https://github.com/elManto/p5_mantovani_alessandro.git
 
 Per effettuare l'importazione del progetto in Eclipse è sufficiente:
 1. File
