@@ -477,7 +477,6 @@ public class Window {
 	}
 	
 	private void scheduleAutoAnswerJOptionPane(int answer,int timeToWait){
-		System.out.println("INSIDE SCHEDULEAUTOANSWERJOPTIONPANE");
 		TimerTask timerTask = new TimerTask() {
 	        @Override
 	        public void run() {

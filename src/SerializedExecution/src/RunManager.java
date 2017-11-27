@@ -98,7 +98,8 @@ public class RunManager implements Runnable {
 	private void showRunningWindow(JFrame frame) {
 		setParent(frame);
 		this.parent.setEnabled(false);
-		String message = "Serialized execution running...\nPlease wait\n\nCurrent running environment:\n";
+		String message = "Serialized execution running...\nPlease wait\n\n"
+				+ "Current running environment:\n";
 		for (FileType fileType : FileType.values()) {
 			message = message + fileType.name() + " : ";
 			
@@ -109,7 +110,8 @@ public class RunManager implements Runnable {
 			message = message.substring(0, message.length() - 2);
 			message = message + "\n";
 		}
-		message += "\nAfter serialized execution this window will be automatically closed.\nProduced output will "
+		message += "\nAfter serialized execution this window will be "
+				+ "automatically closed.\nProduced output will "
 				+ "be available at " + outputSet.getOutputFileFolder();
 		
 		JPanel panel = new JPanel();
@@ -259,6 +261,12 @@ public class RunManager implements Runnable {
 				+ ", outputSet=" + outputSet + "]";
 	}
 	
+	/*
+	 * For each clicked models, we must be sure that its path exists.
+	 * We perform this control and we add the inexistent model (i.e.
+	 * models whose path is not correct) to the ArrayList<Model>
+	 * named "invalidModel"
+	 */
 	
 	private ArrayList<Model> validatePaths() {
 		ArrayList<Model> invalidModel = new ArrayList<Model>();
