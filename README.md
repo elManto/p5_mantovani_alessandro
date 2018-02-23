@@ -1,18 +1,20 @@
-# Ottimizzazione Classificatori Automatici
+# Automatic classifiers optimization
+
+Tool to serialize execution of different classifiers (GUI)
 
 # Implementation
 
-Dopo aver eseguito la clonazione della repository con il comando:
+After clone the project by:
 
 	git clone https://github.com/elManto/p5_mantovani_alessandro.git
 
-Per effettuare l'importazione del progetto in Eclipse è sufficiente:
+Import in Eclipse IDE with the following commands:
 1. File
 2. Import
 3. Existing Projects Into Workspace
-4. Select root directory -> Browse...(cercare il path del progetto)
+4. Select root directory -> Browse...(look for the project path)
 5. Finish
 
 # Testing
 
-Importare nel 'default package' le classi contenute nelle directory 'test-strutturali' e 'test-funzionali'. Nota che il 'default package' è contenuto nella cartella 'src' del progetto.
+Import in 'default package' all the classes which are contained in the directories 'test-strutturali' and 'test-funzionali'. Note that 'default package' is contained in the directory 'src' of the project.
